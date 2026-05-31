@@ -99,6 +99,7 @@ message("barometers.json updated.")
 
 # 7. Regenerate the map
 message("Regenerating map...")
-source("analysis/first-steps/exploratory-map-2.R")
+source("pipeline/map/map_agg.R")
+source("pipeline/map/map_last.R")
 
 message("Done.")
