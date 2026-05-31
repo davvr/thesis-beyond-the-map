@@ -51,7 +51,53 @@ if (length(local_zips_updated) > 6) {
   }
 }
 
-# 6. Regenerate the map
+# 6. Generate docs/barometers.json with metadata of the current 6 barometers
+
+month_label <- function(date) {
+  format(date, "%b")  # "Jan", "Feb", etc.
+}
+
+year_label <- function(date) {
+  format(date, "%Y")
+}
+
+# Read current ZIPs and match with catalogue dates
+current_zips <- fs::dir_ls("data-raw/cis", glob = "*.zip")
+current_ids  <- stringr::str_extract(fs::path_file(current_zips), "\\d+")
+
+catalogue    <- list_barometers(n = 20)
+
+barometers_meta <- tibble::tibble(study_id = current_ids) |>
+  dplyr::left_join(
+    dplyr::select(catalogue, study_id, date),
+    by = "study_id"
+  ) |>
+  dplyr::arrange(dplyr::desc(date)) |>
+  dplyr::mutate(
+    month = month_label(date),
+    year  = year_label(date)
+  )
+
+json_out <- list(
+  latest = list(
+    id    = barometers_meta$study_id[1],
+    month = barometers_meta$month[1],
+    year  = barometers_meta$year[1]
+  ),
+  all = purrr::map(seq_len(nrow(barometers_meta)), function(i) {
+    list(
+      id    = barometers_meta$study_id[i],
+      month = barometers_meta$month[i],
+      year  = barometers_meta$year[i]
+    )
+  })
+)
+
+fs::dir_create("docs")
+jsonlite::write_json(json_out, "docs/barometers.json", auto_unbox = TRUE, pretty = TRUE)
+message("barometers.json updated.")
+
+# 7. Regenerate the map
 message("Regenerating map...")
 source("analysis/first-steps/exploratory-map-2.R")
 
