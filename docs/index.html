@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CIS Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0e0f11;
+      --surface:  #16181c;
+      --border:   #2a2d34;
+      --accent:   #c8f135;
+      --muted:    #5a5f6b;
+      --text:     #e8eaf0;
+      --text-dim: #9aa0ad;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem; height: 56px;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; letter-spacing: 0.12em; color: var(--accent);
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-dim); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    /* SECTIONS */
+    section {
+      min-height: calc(100vh - 56px);
+      padding: 5rem 2.5rem 4rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    section + section { border-top: 1px solid var(--border); }
+
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      letter-spacing: 0.04em; line-height: 1; margin-bottom: 1.2rem;
+    }
+    .section-desc {
+      font-size: 0.95rem; line-height: 1.75;
+      color: var(--text-dim); max-width: 640px; margin-bottom: 2rem;
+    }
+
+    /* BAROMETER CHIPS */
+    .barometers-row {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 2rem; align-items: center; min-height: 2rem;
+    }
+    .barometers-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-right: 0.5rem;
+    }
+    .chip {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; padding: 0.25rem 0.75rem;
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text-dim); background: var(--surface); letter-spacing: 0.04em;
+    }
+    .chip.highlight {
+      border-color: var(--accent); color: var(--accent);
+    }
+    .chip.badge {
+      border-color: #5a4fcf; color: #9d97e8; background: #1a1830;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex; gap: 0; margin-bottom: 1.5rem;
+      border: 1px solid var(--border); border-radius: 3px;
+      overflow: hidden; width: fit-content;
+    }
+    .tab-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.5rem 1.25rem; background: var(--surface); color: var(--muted);
+      border: none; border-right: 1px solid var(--border);
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+    }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { background: var(--accent); color: #0e0f11; font-weight: 500; }
+
+    /* MAP FRAME */
+    .map-frame {
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; display: flex;
+      align-items: center; justify-content: center;
+      padding: 2rem; min-height: 420px;
+    }
+    .map-frame img { width: 100%; max-width: 900px; height: auto; display: block; }
+    .placeholder {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; width: 100%; min-height: 380px; color: var(--muted);
+    }
+    .placeholder-icon { font-size: 2.5rem; opacity: 0.3; }
+    .placeholder p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .map-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--muted);
+      text-align: center; margin-top: 1rem; letter-spacing: 0.05em;
+    }
+
+    /* TAB PANELS */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* COMING SOON */
+    .coming-soon {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--border);
+      padding: 0.4rem 1rem; border-radius: 2px; margin-top: 2rem;
+    }
+    .coming-soon::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--accent); opacity: 0.5;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--muted); letter-spacing: 0.05em;
+    }
+    footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--accent); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { opacity: 0; animation: fadeUp 0.6s ease forwards; }
+    .fade-up:nth-child(1) { animation-delay: 0.05s; }
+    .fade-up:nth-child(2) { animation-delay: 0.15s; }
+    .fade-up:nth-child(3) { animation-delay: 0.25s; }
+    .fade-up:nth-child(4) { animation-delay: 0.35s; }
+    .fade-up:nth-child(5) { animation-delay: 0.45s; }
+    .fade-up:nth-child(6) { animation-delay: 0.55s; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo">CIS Tracker</span>
+    <ul class="nav-links">
+      <li><a href="#map" class="active">Map</a></li>
+      <li><a href="#map-adjusted">Map Adjusted</a></li>
+      <li><a href="#problems">Problems</a></li>
+      <li><a href="#ideology">Ideology</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAP -->
+  <section id="map">
+    <p class="section-label fade-up">Electoral projection</p>
+    <h1 class="section-title fade-up">Seat allocation<br>from CIS surveys</h1>
+    <p class="section-desc fade-up">
+      Provincial seat allocation projected from the six most recent CIS monthly
+      barometers under the D'Hondt method. Vote intentions are aggregated across
+      barometers using the survey-calibrated weights (<em>PESO</em>), then
+      allocated to seats by province following Spain's current electoral law.
+      Updated automatically each month.
+    </p>
+
+    <div class="barometers-row fade-up" id="chips-map">
+      <span class="barometers-label">Barometers</span>
+    </div>
+
+    <div class="tabs fade-up" data-group="map">
+      <button class="tab-btn active" data-tab="map-agg" data-scope="all">6-month aggregate</button>
+      <button class="tab-btn" data-tab="map-latest" data-scope="latest">Latest month only</button>
+      <button class="tab-btn" data-tab="map-swing" data-scope="latest">Latest + swing</button>
+    </div>
+
+    <div id="map-agg" class="tab-panel active">
+      <div class="map-frame">
+        <img src="../outputs/first-outputs/exploratory_map_2.png"
+             alt="6-month aggregated seat allocation map" />
+      </div>
+      <p class="map-caption">6-month aggregate · Source: CIS · CC BY 4.0 · D'Hondt · beyond-the-map TFM, UC3M 2026</p>
+    </div>
+    <div id="map-latest" class="tab-panel">
+      <div class="map-frame">
+        <div class="placeholder">
+          <div class="placeholder-icon">◻</div>
+          <p>Latest month projection — coming soon</p>
+        </div>
+      </div>
+      <p class="map-caption">Single barometer projection · In development</p>
+    </div>
+    <div id="map-swing" class="tab-panel">
+      <div class="map-frame">
+        <div class="placeholder">
+          <div class="placeholder-icon">◻</div>
+          <p>Latest month + Tezanos swing — coming soon</p>
+        </div>
+      </div>
+      <p class="map-caption">Swing-adjusted projection · In development</p>
+    </div>
+  </section>
+
+  <!-- MAP ADJUSTED -->
+  <section id="map-adjusted">
+    <p class="section-label fade-up">Adjusted projection</p>
+    <h2 class="section-title fade-up">Seat allocation<br>bias-corrected</h2>
+    <p class="section-desc fade-up">
+      The same provincial seat allocation with corrections applied to reduce
+      known biases in CIS barometer data. The adjusted projection aims to
+      provide a closer approximation to actual electoral outcomes.
+    </p>
+
+    <div class="barometers-row fade-up" id="chips-adj">
+      <span class="barometers-label">Barometers</span>
+    </div>
+
+    <div class="tabs fade-up" data-group="adj">
+      <button class="tab-btn active" data-tab="adj-agg" data-scope="all">6-month aggregate</button>
+      <button class="tab-btn" data-tab="adj-latest" data-scope="latest">Latest month only</button>
+      <button class="tab-btn" data-tab="adj-swing" data-scope="latest">Latest + swing</button>
+    </div>
+
+    <div id="adj-agg" class="tab-panel active">
+      <div class="map-frame">
+        <div class="placeholder">
+          <div class="placeholder-icon">◻</div>
+          <p>Adjusted 6-month aggregate — coming soon</p>
+        </div>
+      </div>
+      <p class="map-caption">Bias-corrected aggregate · In development</p>
+    </div>
+    <div id="adj-latest" class="tab-panel">
+      <div class="map-frame">
+        <div class="placeholder">
+          <div class="placeholder-icon">◻</div>
+          <p>Adjusted latest month projection — coming soon</p>
+        </div>
+      </div>
+      <p class="map-caption">Bias-corrected single barometer · In development</p>
+    </div>
+    <div id="adj-swing" class="tab-panel">
+      <div class="map-frame">
+        <div class="placeholder">
+          <div class="placeholder-icon">◻</div>
+          <p>Adjusted latest + swing — coming soon</p>
+        </div>
+      </div>
+      <p class="map-caption">Bias-corrected swing-adjusted · In development</p>
+    </div>
+  </section>
+
+  <!-- PROBLEMS -->
+  <section id="problems">
+    <p class="section-label">Public opinion</p>
+    <h2 class="section-title">Top problems</h2>
+    <p class="section-desc">
+      What do Spaniards consider the most pressing problems facing the country?
+      This section will visualize the monthly and aggregated rankings of the
+      main problems cited in each CIS barometer.
+    </p>
+    <div class="coming-soon">In development</div>
+  </section>
+
+  <!-- IDEOLOGY -->
+  <section id="ideology">
+    <p class="section-label">Self-placement</p>
+    <h2 class="section-title">Ideological<br>evolution</h2>
+    <p class="section-desc">
+      Monthly tracking of ideological self-placement from the CIS barometers.
+      Visualizes how the distribution of left–right self-identification shifts
+      over the six-month window.
+    </p>
+    <div class="coming-soon">In development</div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>beyond-the-map · UC3M MSc Computational Social Science · 2026</span>
+    <a href="https://github.com/davvr/thesis-beyond-the-map" target="_blank">GitHub →</a>
+  </footer>
+
+  <script>
+    // Load barometers.json and render chips dynamically
+    let barometerData = null;
+
+    async function loadBarometers() {
+      try {
+        const res = await fetch('barometers.json');
+        barometerData = await res.json();
+        renderChips('chips-map', 'all');
+        renderChips('chips-adj', 'all');
+      } catch (e) {
+        // Fallback: show static chips if JSON not available yet
+        ['chips-map', 'chips-adj'].forEach(id => {
+          const row = document.getElementById(id);
+          row.innerHTML = '<span class="barometers-label">Barometers</span>' +
+            '<span class="chip" style="color:var(--muted)">Loading...</span>';
+        });
+      }
+    }
+
+    function renderChips(containerId, scope) {
+      const row = document.getElementById(containerId);
+      if (!row || !barometerData) return;
+
+      const items = scope === 'latest'
+        ? [barometerData.latest]
+        : barometerData.all;
+
+      const isSwing = containerId.includes('swing');
+
+      let html = '<span class="barometers-label">Barometers</span>';
+      items.forEach((b, i) => {
+        const cls = (scope === 'latest' || i === 0) ? 'chip highlight' : 'chip';
+        html += `<span class="${cls}">${b.month} ${b.year} · ${b.id}</span>`;
+      });
+      if (isSwing) {
+        html += '<span class="chip badge">swing-adjusted</span>';
+      }
+      row.innerHTML = html;
+    }
+
+    // Tab switching with chip update
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group   = btn.closest('[data-group]').dataset.group;
+        const target  = btn.dataset.tab;
+        const scope   = btn.dataset.scope;
+        const isSwing = target.includes('swing');
+        const chipsId = group === 'map' ? 'chips-map' : 'chips-adj';
+
+        // Update buttons
+        btn.closest('[data-group]').querySelectorAll('.tab-btn')
+          .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update panels
+        const tabsEl = btn.closest('.tabs');
+        let el = tabsEl.nextElementSibling;
+        while (el && el.classList.contains('tab-panel')) {
+          el.classList.toggle('active', el.id === target);
+          el = el.nextElementSibling;
+        }
+
+        // Update chips
+        if (barometerData) {
+          renderChips(chipsId, scope);
+          // Add swing badge if needed
+          if (isSwing && scope === 'latest') {
+            const row = document.getElementById(chipsId);
+            row.innerHTML += '<span class="chip badge">swing-adjusted</span>';
+          }
+        }
+      });
+    });
+
+    // Active nav on scroll
+    const sections = document.querySelectorAll('section');
+    const links    = document.querySelectorAll('.nav-links a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const a = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(s => observer.observe(s));
+
+    loadBarometers();
+  </script>
+
+</body>
+</html>
