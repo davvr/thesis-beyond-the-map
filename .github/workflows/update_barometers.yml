@@ -25,6 +25,9 @@ jobs:
       - name: Install system dependencies and packages
         uses: r-lib/actions/setup-renv@v2
 
+      - name: Wait before scraping (rate limit politeness)
+        run: sleep 30
+
       - name: Check for new barometer and update
         run: Rscript R/actions/update_barometers.R
 
