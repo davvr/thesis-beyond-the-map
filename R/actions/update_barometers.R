@@ -104,4 +104,8 @@ message("Regenerating map...")
 source("pipeline/map/map_agg.R")
 source("pipeline/map/map_last.R")
 
+# 8. Regenerate problems and ideology
+source("pipeline/problems/problems.R")
+source("pipeline/ideology/ideology_evolution.R")
+
 message("Done.")
