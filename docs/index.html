@@ -86,12 +86,8 @@
       border: 1px solid var(--border); border-radius: 2px;
       color: var(--text-dim); background: var(--surface); letter-spacing: 0.04em;
     }
-    .chip.highlight {
-      border-color: var(--accent); color: var(--accent);
-    }
-    .chip.badge {
-      border-color: #5a4fcf; color: #9d97e8; background: #1a1830;
-    }
+    .chip.highlight { border-color: var(--accent); color: var(--accent); }
+    .chip.badge { border-color: #5a4fcf; color: #9d97e8; background: #1a1830; }
 
     /* TABS */
     .tabs {
@@ -110,15 +106,15 @@
     .tab-btn:hover { color: var(--text); }
     .tab-btn.active { background: var(--accent); color: #0e0f11; font-weight: 500; }
 
-    /* MAP FRAME */
-    .map-frame {
+    /* IMAGE FRAME */
+    .img-frame {
       width: 100%; background: var(--surface);
       border: 1px solid var(--border); border-radius: 4px;
       overflow: hidden; display: flex;
       align-items: center; justify-content: center;
       padding: 2rem; min-height: 420px;
     }
-    .map-frame img { width: 100%; max-width: 900px; height: auto; display: block; }
+    .img-frame img { width: 100%; max-width: 900px; height: auto; display: block; }
     .placeholder {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -129,7 +125,7 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
     }
-    .map-caption {
+    .img-caption {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.68rem; color: var(--muted);
       text-align: center; margin-top: 1rem; letter-spacing: 0.05em;
@@ -213,26 +209,25 @@
     </div>
 
     <div id="map-agg" class="tab-panel active">
-      <div class="map-frame">
-<img src="images/maps/map_agg.png" alt="6-month aggregated seat allocation map" />
+      <div class="img-frame">
+        <img src="images/maps/map_agg.png" alt="6-month aggregated seat allocation map" />
       </div>
-      <p class="map-caption">6-month aggregate · Source: CIS · CC BY 4.0 · D'Hondt · beyond-the-map TFM, UC3M 2026</p>
+      <p class="img-caption">6-month aggregate · Source: CIS · CC BY 4.0 · D'Hondt · beyond-the-map TFM, UC3M 2026</p>
     </div>
     <div id="map-latest" class="tab-panel">
-      <div class="map-frame">
+      <div class="img-frame">
         <img src="images/maps/map_last.png" alt="Latest month seat allocation map" />
-        </div>
       </div>
-      <p class="map-caption">Single barometer projection · In development</p>
+      <p class="img-caption">Latest barometer only · Source: CIS · CC BY 4.0 · D'Hondt · beyond-the-map TFM, UC3M 2026</p>
     </div>
     <div id="map-swing" class="tab-panel">
-      <div class="map-frame">
+      <div class="img-frame">
         <div class="placeholder">
           <div class="placeholder-icon">◻</div>
           <p>Latest month + Tezanos swing — coming soon</p>
         </div>
       </div>
-      <p class="map-caption">Swing-adjusted projection · In development</p>
+      <p class="img-caption">Swing-adjusted projection · In development</p>
     </div>
   </section>
 
@@ -257,55 +252,94 @@
     </div>
 
     <div id="adj-agg" class="tab-panel active">
-      <div class="map-frame">
+      <div class="img-frame">
         <div class="placeholder">
           <div class="placeholder-icon">◻</div>
           <p>Adjusted 6-month aggregate — coming soon</p>
         </div>
       </div>
-      <p class="map-caption">Bias-corrected aggregate · In development</p>
+      <p class="img-caption">Bias-corrected aggregate · In development</p>
     </div>
     <div id="adj-latest" class="tab-panel">
-      <div class="map-frame">
+      <div class="img-frame">
         <div class="placeholder">
           <div class="placeholder-icon">◻</div>
+          <p>Adjusted latest month projection — coming soon</p>
         </div>
       </div>
-      <p class="map-caption">Bias-corrected single barometer · In development</p>
+      <p class="img-caption">Bias-corrected single barometer · In development</p>
     </div>
     <div id="adj-swing" class="tab-panel">
-      <div class="map-frame">
+      <div class="img-frame">
         <div class="placeholder">
           <div class="placeholder-icon">◻</div>
           <p>Adjusted latest + swing — coming soon</p>
         </div>
       </div>
-      <p class="map-caption">Bias-corrected swing-adjusted · In development</p>
+      <p class="img-caption">Bias-corrected swing-adjusted · In development</p>
     </div>
   </section>
 
   <!-- PROBLEMS -->
   <section id="problems">
-    <p class="section-label">Public opinion</p>
-    <h2 class="section-title">Top problems</h2>
-    <p class="section-desc">
+    <p class="section-label fade-up">Public opinion</p>
+    <h2 class="section-title fade-up">Top problems</h2>
+    <p class="section-desc fade-up">
       What do Spaniards consider the most pressing problems facing the country?
-      This section will visualize the monthly and aggregated rankings of the
-      main problems cited in each CIS barometer.
+      Rankings based on the three main problems cited by each respondent
+      (PESPANNA1/2/3), weighted by the survey calibration weight (PESO).
     </p>
-    <div class="coming-soon">In development</div>
+
+    <div class="barometers-row fade-up" id="chips-prob">
+      <span class="barometers-label">Barometers</span>
+    </div>
+
+    <div class="tabs fade-up" data-group="prob">
+      <button class="tab-btn active" data-tab="prob-last" data-scope="latest">Latest month</button>
+      <button class="tab-btn" data-tab="prob-agg" data-scope="all">6-month average</button>
+      <button class="tab-btn" data-tab="prob-evo" data-scope="all">Evolution</button>
+    </div>
+
+    <div id="prob-last" class="tab-panel active">
+      <div class="img-frame">
+        <img src="images/problems/problems_last.png" alt="Top problems latest month" />
+      </div>
+      <p class="img-caption">Latest barometer · Source: CIS · PESPANNA1/2/3 · beyond-the-map TFM, UC3M 2026</p>
+    </div>
+    <div id="prob-agg" class="tab-panel">
+      <div class="img-frame">
+        <img src="images/problems/problems_agg.png" alt="Top problems 6-month average" />
+      </div>
+      <p class="img-caption">6-month average · Source: CIS · PESPANNA1/2/3 · beyond-the-map TFM, UC3M 2026</p>
+    </div>
+    <div id="prob-evo" class="tab-panel">
+      <div class="img-frame">
+        <img src="images/problems/problems_evolution.png" alt="Evolution of main problems" />
+      </div>
+      <p class="img-caption">Top 7 problems over 6 months · Source: CIS · PESPANNA1/2/3 · beyond-the-map TFM, UC3M 2026</p>
+    </div>
   </section>
 
   <!-- IDEOLOGY -->
   <section id="ideology">
-    <p class="section-label">Self-placement</p>
-    <h2 class="section-title">Ideological<br>evolution</h2>
-    <p class="section-desc">
-      Monthly tracking of ideological self-placement from the CIS barometers.
-      Visualizes how the distribution of left–right self-identification shifts
-      over the six-month window.
+    <p class="section-label fade-up">Self-placement</p>
+    <h2 class="section-title fade-up">Ideological<br>evolution</h2>
+    <p class="section-desc fade-up">
+      Monthly tracking of ideological self-placement (ESCIDEOL, 1–10 scale)
+      from the CIS barometers. The heatmap shows the weighted distribution
+      across the left–right scale; the red line tracks the weighted monthly mean.
     </p>
-    <div class="coming-soon">In development</div>
+
+    <div class="barometers-row fade-up" id="chips-ideo">
+      <span class="barometers-label">Barometers</span>
+    </div>
+
+    <div id="ideo-main" class="tab-panel active">
+      <div class="img-frame">
+        <img src="images/ideology/ideology_evolution.png" alt="Ideological evolution" />
+      </div>
+      <p class="img-caption">ESCIDEOL (1–10) · Source: CIS · beyond-the-map TFM, UC3M 2026</p>
+    </div>
   </section>
 
   <!-- FOOTER -->
@@ -315,61 +349,46 @@
   </footer>
 
   <script>
-    // Load barometers.json and render chips dynamically
     let barometerData = null;
 
     async function loadBarometers() {
       try {
         const res = await fetch('barometers.json');
         barometerData = await res.json();
-        renderChips('chips-map', 'all');
-        renderChips('chips-adj', 'all');
+        renderChips('chips-map',  'all');
+        renderChips('chips-adj',  'all');
+        renderChips('chips-prob', 'latest');
+        renderChips('chips-ideo', 'all');
       } catch (e) {
-        // Fallback: show static chips if JSON not available yet
-        ['chips-map', 'chips-adj'].forEach(id => {
-          const row = document.getElementById(id);
-          row.innerHTML = '<span class="barometers-label">Barometers</span>' +
-            '<span class="chip" style="color:var(--muted)">Loading...</span>';
-        });
+        console.warn('barometers.json not available:', e);
       }
     }
 
-    function renderChips(containerId, scope) {
+    function renderChips(containerId, scope, isSwing = false) {
       const row = document.getElementById(containerId);
       if (!row || !barometerData) return;
-
-      const items = scope === 'latest'
-        ? [barometerData.latest]
-        : barometerData.all;
-
-      const isSwing = containerId.includes('swing');
-
+      const items = scope === 'latest' ? [barometerData.latest] : barometerData.all;
       let html = '<span class="barometers-label">Barometers</span>';
       items.forEach((b, i) => {
         const cls = (scope === 'latest' || i === 0) ? 'chip highlight' : 'chip';
         html += `<span class="${cls}">${b.month} ${b.year} · ${b.id}</span>`;
       });
-      if (isSwing) {
-        html += '<span class="chip badge">swing-adjusted</span>';
-      }
+      if (isSwing) html += '<span class="chip badge">swing-adjusted</span>';
       row.innerHTML = html;
     }
 
-    // Tab switching with chip update
+    // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const group   = btn.closest('[data-group]').dataset.group;
         const target  = btn.dataset.tab;
         const scope   = btn.dataset.scope;
         const isSwing = target.includes('swing');
-        const chipsId = group === 'map' ? 'chips-map' : 'chips-adj';
 
-        // Update buttons
         btn.closest('[data-group]').querySelectorAll('.tab-btn')
           .forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Update panels
         const tabsEl = btn.closest('.tabs');
         let el = tabsEl.nextElementSibling;
         while (el && el.classList.contains('tab-panel')) {
@@ -377,15 +396,9 @@
           el = el.nextElementSibling;
         }
 
-        // Update chips
-        if (barometerData) {
-          renderChips(chipsId, scope);
-          // Add swing badge if needed
-          if (isSwing && scope === 'latest') {
-            const row = document.getElementById(chipsId);
-            row.innerHTML += '<span class="chip badge">swing-adjusted</span>';
-          }
-        }
+        const chipsMap = { map: 'chips-map', adj: 'chips-adj', prob: 'chips-prob' };
+        const chipsId = chipsMap[group];
+        if (chipsId && barometerData) renderChips(chipsId, scope, isSwing);
       });
     });
 
