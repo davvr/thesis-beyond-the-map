@@ -20,7 +20,7 @@ CIS_CATALOGUE_URL <- paste0(
   "https://www.cis.es/es/estudios/catalogo?start=1&q=bar%C3%B3metro&fromDate=&from=%5B+now%5D&toDate=&to=%5Bnow-100y+%5D&sort=&catalogo=estudio"
 )
 
-CIS_USER_AGENT <- "beyond-the-map TFM scraper (https://github.com/davvr/beyond-the-map)"
+CIS_USER_AGENT <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 (David Valero Regalón; dvalreg@gmail.com / 100561036@alumnos.uc3m.es)"
 
 #' List the N most recent monthly CIS barometers
 #'
