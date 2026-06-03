@@ -44,7 +44,7 @@ list_barometers <- function(n = 6, catalogue_url = CIS_CATALOGUE_URL) {
   # 1. Fetch the catalogue page.
   resp <- httr2::request(catalogue_url) |>
     httr2::req_user_agent(CIS_USER_AGENT) |>
-    httr2::req_retry(max_tries = 3, backoff = ~ 2 ^ .x) |>
+    httr2::req_retry(max_tries = 5, backoff = ~ 30 * .x) |>
     httr2::req_perform()
   
   html <- httr2::resp_body_html(resp)

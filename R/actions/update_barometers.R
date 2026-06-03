@@ -2,6 +2,8 @@
 # Called by GitHub Actions: checks for a new barometer, downloads it,
 # drops the oldest, and regenerates the map. Exits silently if no new data.
 
+# Be polite with the CIS server
+Sys.sleep(10)
 source("R/scraping/list_barometers.R")
 source("R/scraping/get_zip_url.R")
 source("R/scraping/download_zip.R")
