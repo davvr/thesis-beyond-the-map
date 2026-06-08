@@ -134,20 +134,6 @@
     /* TAB PANELS */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-
-    /* COMING SOON */
-    .coming-soon {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted); border: 1px solid var(--border);
-      padding: 0.4rem 1rem; border-radius: 2px; margin-top: 2rem;
-    }
-    .coming-soon::before {
-      content: ''; width: 6px; height: 6px;
-      border-radius: 50%; background: var(--accent); opacity: 0.5;
-    }
-
     /* FOOTER */
     footer {
       border-top: 1px solid var(--border);
@@ -180,7 +166,6 @@
     <span class="nav-logo">CIS Tracker</span>
     <ul class="nav-links">
       <li><a href="#map" class="active">Map</a></li>
-      <li><a href="#map-adjusted">Map Adjusted</a></li>
       <li><a href="#problems">Problems</a></li>
       <li><a href="#ideology">Ideology</a></li>
     </ul>
@@ -214,72 +199,23 @@
       </div>
       <p class="img-caption">6-month aggregate · Source: CIS · CC BY 4.0 · D'Hondt · beyond-the-map TFM, UC3M 2026</p>
     </div>
+
     <div id="map-latest" class="tab-panel">
       <div class="img-frame">
         <img src="images/maps/map_last.png" alt="Latest month seat allocation map" />
       </div>
       <p class="img-caption">Latest barometer only · Source: CIS · CC BY 4.0 · D'Hondt · beyond-the-map TFM, UC3M 2026</p>
     </div>
+
     <div id="map-swing" class="tab-panel">
-      <div class="img-frame">
-        <div class="placeholder">
-          <div class="placeholder-icon">◻</div>
-          <p>Latest month + Tezanos swing — coming soon</p>
-        </div>
-      </div>
-      <p class="img-caption">Swing-adjusted projection · In development</p>
-    </div>
+    <div class="img-frame">
+  <img src="images/maps/map_last_swing.png" alt="Latest month + UNS swing map" />
+  </div>
+<p class="img-caption">UNS swing-adjusted · Butler & Stokes (1969) · Source: CIS · beyond-the-map TFM, UC3M 2026</p>
+  </div>
+  
   </section>
-
-  <!-- MAP ADJUSTED -->
-  <section id="map-adjusted">
-    <p class="section-label fade-up">Adjusted projection</p>
-    <h2 class="section-title fade-up">Seat allocation<br>bias-corrected</h2>
-    <p class="section-desc fade-up">
-      The same provincial seat allocation with corrections applied to reduce
-      known biases in CIS barometer data. The adjusted projection aims to
-      provide a closer approximation to actual electoral outcomes.
-    </p>
-
-    <div class="barometers-row fade-up" id="chips-adj">
-      <span class="barometers-label">Barometers</span>
-    </div>
-
-    <div class="tabs fade-up" data-group="adj">
-      <button class="tab-btn active" data-tab="adj-agg" data-scope="all">6-month aggregate</button>
-      <button class="tab-btn" data-tab="adj-latest" data-scope="latest">Latest month only</button>
-      <button class="tab-btn" data-tab="adj-swing" data-scope="latest">Latest + swing</button>
-    </div>
-
-    <div id="adj-agg" class="tab-panel active">
-      <div class="img-frame">
-        <div class="placeholder">
-          <div class="placeholder-icon">◻</div>
-          <p>Adjusted 6-month aggregate — coming soon</p>
-        </div>
-      </div>
-      <p class="img-caption">Bias-corrected aggregate · In development</p>
-    </div>
-    <div id="adj-latest" class="tab-panel">
-      <div class="img-frame">
-        <div class="placeholder">
-          <div class="placeholder-icon">◻</div>
-          <p>Adjusted latest month projection — coming soon</p>
-        </div>
-      </div>
-      <p class="img-caption">Bias-corrected single barometer · In development</p>
-    </div>
-    <div id="adj-swing" class="tab-panel">
-      <div class="img-frame">
-        <div class="placeholder">
-          <div class="placeholder-icon">◻</div>
-          <p>Adjusted latest + swing — coming soon</p>
-        </div>
-      </div>
-      <p class="img-caption">Bias-corrected swing-adjusted · In development</p>
-    </div>
-  </section>
-
+  
   <!-- PROBLEMS -->
   <section id="problems">
     <p class="section-label fade-up">Public opinion</p>
