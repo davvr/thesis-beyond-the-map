@@ -99,10 +99,11 @@ fs::dir_create("docs")
 jsonlite::write_json(json_out, "docs/barometers.json", auto_unbox = TRUE, pretty = TRUE)
 message("barometers.json updated.")
 
-# 7. Regenerate the map
+# 7. Regenerate the maps
 message("Regenerating map...")
 source("pipeline/map/map_agg.R")
 source("pipeline/map/map_last.R")
+source("pipeline/map/map_last_swing.R")
 
 # 8. Regenerate problems and ideology
 source("pipeline/problems/problems.R")
