@@ -30,6 +30,8 @@ jobs:
 
       - name: Check for new barometer and update
         run: Rscript R/actions/update_barometers.R
+        env:
+          FORCE_REBUILD: ${{ github.event_name == 'workflow_dispatch' }}
 
       - name: Commit and push if changed
         run: |

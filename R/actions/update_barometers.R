@@ -19,7 +19,9 @@ remote_ids <- remote$study_id
 # 3. Is there anything new?
 new_ids <- setdiff(remote_ids, local_ids)
 
-if (length(new_ids) == 0) {
+force_rebuild <- isTRUE(as.logical(Sys.getenv("FORCE_REBUILD", "FALSE")))
+
+if (length(new_ids) == 0 && !force_rebuild) {
   message("No new barometers. Nothing to do.")
   quit(save = "no", status = 0)
 }
