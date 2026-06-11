@@ -1,11 +1,39 @@
 {
-  "latest": {"id": "3557", "month": "Apr", "year": "2026"},
+  "latest": {
+    "id": "3557",
+    "month": "Apr",
+    "year": "2026"
+  },
   "all": [
-    {"id": "3557", "month": "Apr", "year": "2026"},
-    {"id": "3546", "month": "Mar", "year": "2026"},
-    {"id": "3544", "month": "Feb", "year": "2026"},
-    {"id": "3540", "month": "Jan", "year": "2026"},
-    {"id": "3536", "month": "Dec", "year": "2025"},
-    {"id": "3530", "month": "Nov", "year": "2025"}
+    {
+      "id": "3557",
+      "month": "Apr",
+      "year": "2026"
+    },
+    {
+      "id": "3546",
+      "month": "Mar",
+      "year": "2026"
+    },
+    {
+      "id": "3544",
+      "month": "Feb",
+      "year": "2026"
+    },
+    {
+      "id": "3540",
+      "month": "Jan",
+      "year": "2026"
+    },
+    {
+      "id": "3536",
+      "month": "Dec",
+      "year": "2025"
+    },
+    {
+      "id": "3530",
+      "month": "Nov",
+      "year": "2025"
+    }
   ]
 }
