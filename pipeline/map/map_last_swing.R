@@ -1,11 +1,14 @@
 # pipeline/map/map_last_swing.R
-# Latest CIS barometer projection adjusted with Uniform National Swing (UNS).
+# Latest CIS barometer projection adjusted with PROPORTIONAL National Swing.
 #
 # Method: reads the most recent CIS barometer, computes each party's national
-# vote share from the (weighted) direct vote intention, derives the national
-# swing against the 23J 2023 result, and applies that swing uniformly over each
-# province's 2023 baseline before running D'Hondt. Fully automated: the swing
-# source is the latest barometer's microdata, so the map updates every month.
+# vote share from the (weighted) direct vote intention, and projects it onto
+# each province by scaling the province's 2023 result by the national ratio
+# (current share / 2023 share). Unlike additive swing, proportional swing
+# preserves each party's territorial structure and does not inflate large
+# parties in their strongholds, which is more appropriate for Spain's
+# territorially heterogeneous system. Fully automated: the source is the
+# latest barometer's microdata, so the map updates every month.
 
 suppressPackageStartupMessages({
   library(tidyverse)
@@ -119,14 +122,18 @@ nat_cis <- cis |>
 # ---------------------------------------------------------------------------
 # Uniform National Swing: national swing applied over provincial 2023 baseline
 # ---------------------------------------------------------------------------
+# Proportional swing: scale each party by the national ratio current/2023.
+# Parties absent in 2023 (p_nat_2023 == 0) have an undefined ratio; we leave
+# their projected share at 0, since there is no 2023 territorial structure to
+# scale (a documented limitation of proportional swing for new entrants).
 swing <- nat_cis |>
   full_join(nat_2023, by = "partido") |>
   replace_na(list(p_cis_nat = 0, p_nat_2023 = 0)) |>
-  mutate(swing = p_cis_nat - p_nat_2023)
+  mutate(ratio = if_else(p_nat_2023 > 0, p_cis_nat / p_nat_2023, 0))
 
 prov_share_full <- prov_2023 |>
   left_join(swing, by = "partido") |>
-  mutate(p_votos = pmax(0, p_votos_2023 + swing)) |>
+  mutate(p_votos = pmax(0, p_votos_2023 * ratio)) |>
   select(codigo_de_provincia, partido, p_votos)
 
 prov_share_with_mag <- prov_share_full |> inner_join(prov_mag, by = "codigo_de_provincia")
