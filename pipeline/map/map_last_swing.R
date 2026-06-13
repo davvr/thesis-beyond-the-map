@@ -1,13 +1,18 @@
 # pipeline/map/map_last_swing.R
 # Latest CIS barometer projection adjusted with Uniform National Swing (UNS).
 #
-# Method: Uses the official CIS estimation (not raw microdata) to compute 
-# the national swing against the 23J results, projecting it evenly across provinces.
+# Method: reads the most recent CIS barometer, computes each party's national
+# vote share from the (weighted) direct vote intention, derives the national
+# swing against the 23J 2023 result, and applies that swing uniformly over each
+# province's 2023 baseline before running D'Hondt. Fully automated: the swing
+# source is the latest barometer's microdata, so the map updates every month.
 
 suppressPackageStartupMessages({
   library(tidyverse)
   library(readxl)
   library(zoo)
+  library(haven)
+  library(fs)
 })
 
 source("R/dhondt.R")
@@ -60,10 +65,14 @@ party_lookup <- tribble(
 )
 all_parties <- party_lookup$partido
 
+# ---------------------------------------------------------------------------
+# 2023 provincial and national baselines
+# ---------------------------------------------------------------------------
 prov_2023 <- results_2023 |>
   filter(nombre_de_provincia != "España", !is.na(codigo_de_provincia)) |>
   select(codigo_de_provincia, votos_validos, any_of(paste0("votos_", all_parties))) |>
-  pivot_longer(any_of(paste0("votos_", all_parties)), names_to = "partido", values_to = "votos", names_prefix = "votos_") |>
+  pivot_longer(any_of(paste0("votos_", all_parties)), names_to = "partido",
+               values_to = "votos", names_prefix = "votos_") |>
   mutate(p_votos_2023 = 100 * votos / votos_validos) |>
   select(codigo_de_provincia, partido, p_votos_2023) |>
   replace_na(list(p_votos_2023 = 0))
@@ -71,33 +80,52 @@ prov_2023 <- results_2023 |>
 nat_2023 <- results_2023 |>
   filter(nombre_de_provincia == "España") |>
   select(votos_validos, any_of(paste0("votos_", all_parties))) |>
-  pivot_longer(any_of(paste0("votos_", all_parties)), names_to = "partido", values_to = "votos", names_prefix = "votos_") |>
+  pivot_longer(any_of(paste0("votos_", all_parties)), names_to = "partido",
+               values_to = "votos", names_prefix = "votos_") |>
   mutate(p_nat_2023 = 100 * votos / votos_validos) |>
   select(partido, p_nat_2023) |>
   replace_na(list(p_nat_2023 = 0))
 
 # ---------------------------------------------------------------------------
-# Inyección del VOTO ESTIMADO nacional (Evita sesgo de intención directa)
+# National vote share from the LATEST barometer (weighted direct intention)
 # ---------------------------------------------------------------------------
-nat_cis <- tribble(
-  ~partido,        ~p_cis_nat,
-  "pp",            33.2,
-  "psoe",          31.5,
-  "vox",           11.8,
-  "sumar",         10.5,
-  "erc",           1.9,
-  "jxcat__junts",  1.6,
-  "eh_bildu",      1.4,
-  "eajpnv",        0.9,
-  "bng",           0.8,
-  "cca",           0.3,
-  "upn",           0.2
+cis_dir <- "data-raw/cis"
+all_zip_files <- fs::dir_ls(cis_dir, glob = "*.zip")
+zip_ids <- stringr::str_extract(fs::path_file(all_zip_files), "\\d+") |> as.integer()
+latest_zip <- all_zip_files[which.max(zip_ids)]
+message("Using most recent barometer: ", fs::path_file(latest_zip))
+
+temp_dir <- tempfile(); dir.create(temp_dir)
+unzip(latest_zip, exdir = temp_dir)
+sav_files <- fs::dir_ls(temp_dir, regexp = "\\.sav$")
+raw <- haven::read_sav(sav_files[1])
+unlink(temp_dir, recursive = TRUE)
+
+cis <- raw |> transmute(
+  intention = haven::zap_labels(INTENCIONGR) |> as.integer(),
+  weight    = as.numeric(PESO)
 )
 
-swing <- nat_cis |> full_join(nat_2023, by = "partido") |> replace_na(list(p_cis_nat = 0, p_nat_2023 = 0)) |>
+drop_codes <- c(8995, 8996, 9977, 9997, 9998, 9999)
+
+nat_cis <- cis |>
+  filter(!is.na(intention), !intention %in% drop_codes) |>
+  inner_join(party_lookup, by = c("intention" = "code")) |>
+  group_by(partido) |>
+  summarise(weighted_count = sum(weight, na.rm = TRUE), .groups = "drop") |>
+  mutate(p_cis_nat = 100 * weighted_count / sum(weighted_count)) |>
+  select(partido, p_cis_nat)
+
+# ---------------------------------------------------------------------------
+# Uniform National Swing: national swing applied over provincial 2023 baseline
+# ---------------------------------------------------------------------------
+swing <- nat_cis |>
+  full_join(nat_2023, by = "partido") |>
+  replace_na(list(p_cis_nat = 0, p_nat_2023 = 0)) |>
   mutate(swing = p_cis_nat - p_nat_2023)
 
-prov_share_full <- prov_2023 |> left_join(swing, by = "partido") |>
+prov_share_full <- prov_2023 |>
+  left_join(swing, by = "partido") |>
   mutate(p_votos = pmax(0, p_votos_2023 + swing)) |>
   select(codigo_de_provincia, partido, p_votos)
 
@@ -110,7 +138,8 @@ allocate_one <- function(df_prov) {
   tibble(partido = names(seats), diputados = as.integer(seats))
 }
 
-prov_alloc <- prov_share_with_mag |> group_by(codigo_de_provincia) |> group_modify(~ allocate_one(.x)) |> ungroup()
+prov_alloc <- prov_share_with_mag |> group_by(codigo_de_provincia) |>
+  group_modify(~ allocate_one(.x)) |> ungroup()
 
 prov_meta <- results_2023 |> filter(nombre_de_provincia != "España", !is.na(codigo_de_provincia)) |>
   select(all_of(cols_metadata)) |> mutate(votos_validos = 100)
@@ -118,7 +147,8 @@ prov_meta <- results_2023 |> filter(nombre_de_provincia != "España", !is.na(cod
 prov_long <- prov_share_full |> left_join(prov_alloc, by = c("codigo_de_provincia", "partido")) |>
   mutate(votos = p_votos, diputados = replace_na(diputados, 0L))
 
-prov_wide <- prov_long |> pivot_wider(names_from = partido, values_from = c(votos, p_votos, diputados), names_glue = "{.value}_{partido}")
+prov_wide <- prov_long |> pivot_wider(names_from = partido,
+                                      values_from = c(votos, p_votos, diputados), names_glue = "{.value}_{partido}")
 
 orden_final <- cols_metadata
 for (p in all_parties) {
@@ -148,5 +178,4 @@ for (p in all_parties) {
 
 results_enriched <- bind_rows(prov_enriched, espana_row) |> select(any_of(orden_final))
 
-# Delegar la renderización
 render_cis_map(results_enriched, out_path = "docs/images/maps/map_last_swing.png")
