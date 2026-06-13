@@ -14,7 +14,7 @@ suppressPackageStartupMessages({
   library(fs)
 })
 
-source("R/scraping/list_barometers.R")
+source("R/read_catalogue.R")
 
 # ---------------------------------------------------------------------------
 # 1. Read ESCIDEOL + weight from every barometer ZIP
@@ -42,9 +42,7 @@ raw_all <- map_dfr(zip_files, read_ideology)
 # ---------------------------------------------------------------------------
 # 2. Clean + attach month labels from the catalogue
 # ---------------------------------------------------------------------------
-catalogue <- list_barometers(n = 20) |>
-  mutate(month_label = format(date, "%b %Y")) |>
-  select(study_id, date, month_label)
+catalogue <- read_catalogue()
 
 clean <- raw_all |>
   filter(!ideol %in% c(98, 99), !is.na(ideol)) |>
