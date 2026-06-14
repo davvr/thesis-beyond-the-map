@@ -212,7 +212,7 @@ render_cis_map <- function(results_enriched, out_path) {
       p <- p + geom_point(data = coords_calc, aes(x = x_pos, y = y_pos, fill = base_hex),
                           shape = 21, color = "black", size = size_dots, stroke = 0.3)
     }
-    p <- p + geom_text(aes(x = cx_local, y = y_texto, label = nombre_prov), color = "#e8eaf0", fontface = "bold", size = 3.5, vjust = 0) +
+    p <- p + geom_text(aes(x = cx_local, y = y_texto, label = nombre_prov), color = "#c8f135", fontface = "bold", size = 3.5, vjust = 0) +
       scale_fill_identity() + theme_void() + theme(plot.background = element_blank())
     
     if (is.null(radio_vista)) {
@@ -222,7 +222,7 @@ render_cis_map <- function(results_enriched, out_path) {
                         ylim = c(cy_local - radio_vista, cy_local + radio_vista), expand = FALSE, clip = "off")
     }
     if (draw_line_below) {
-      p <- p + geom_segment(aes(x = x_line_start, xend = x_line_end, y = y_linea, yend = y_linea), color = "#e8eaf0", linewidth = 0.5)
+      p <- p + geom_segment(aes(x = x_line_start, xend = x_line_end, y = y_linea, yend = y_linea), color = "#c8f135", linewidth = 0.5)
     }
     return(p)
   }
@@ -266,8 +266,8 @@ render_cis_map <- function(results_enriched, out_path) {
     geom_vline(xintercept = 2.0, color = "white", linewidth = 1.5) +
     scale_fill_manual(values = colores_nacional) + scale_x_continuous(limits = c(0, 3)) +
     coord_polar(theta = "y", start = pi / 2, direction = -1) +
-    geom_text(aes(x = 1.0, y = 0.02), label = "Seats", color = "#e8eaf0", size = 3, fontface = "bold") +
-    geom_text(aes(x = 2.9, y = 0.02), label = "Votes", color = "#e8eaf0", size = 3, fontface = "bold") +
+    geom_text(aes(x = 1.0, y = 0.02), label = "Seats", color = "#c8f135", size = 3, fontface = "bold") +
+    geom_text(aes(x = 2.9, y = 0.02), label = "Votes", color = "#c8f135", size = 3, fontface = "bold") +
     theme_void() + theme(panel.background = element_rect(fill = "transparent", color = NA),
                          plot.background  = element_rect(fill = "transparent", color = NA),
                          legend.position  = "none")
@@ -313,7 +313,7 @@ render_cis_map <- function(results_enriched, out_path) {
     geom_point(data = seats_shift, aes(x = x_pos, y = y_pos, fill = base_hex), shape = 21, color = "black", size = 4.8, stroke = 0.3) +
     geom_text(data = labels_shift,
               aes(x = cx, y = y_label, label = provincia_limpia,
-                  color = if_else(is_displaced, "#e8eaf0", if_else(final_hex == HEX_PP_OSCURO, "white", "#e8eaf0", missing = "#e8eaf0"))),
+                  color = if_else(is_displaced, "#c8f135", if_else(final_hex == HEX_PP_OSCURO, "white", "#c8f135", missing = "#c8f135"))),
               size = 3.4, fontface = "bold") +
     scale_fill_identity() + scale_color_identity() + theme_void() +
     theme(panel.background = element_rect(fill = "transparent", color = NA), plot.background  = element_rect(fill = "transparent", color = NA))
@@ -381,7 +381,7 @@ render_cis_map <- function(results_enriched, out_path) {
     if (mostrar_headers) {
       headers <- tibble(label = c("-25%", "25%", "30%", "35%", "40%", "45%", "50%+", "Vote %", "Seats"),
                         x = c(1, 2, 3, 4, 5, 6, 7, 8.5, 10.5), y = 1.6)
-      p <- p + geom_text(data = headers, aes(x = x, y = y, label = label), color = "#e8eaf0", fontface = "bold", size = 3, hjust = 0.5)
+      p <- p + geom_text(data = headers, aes(x = x, y = y, label = label), color = "#c8f135", fontface = "bold", size = 3, hjust = 0.5)
     }
     return(p)
   }
