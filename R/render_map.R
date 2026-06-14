@@ -400,6 +400,6 @@ render_cis_map <- function(results_enriched, out_path) {
     draw_plot(plot_leyenda_dcha,     x = 0.73, y = 0.052, width = 0.25, height = 0.40)
   
   dir.create(dirname(out_path), recursive = TRUE, showWarnings = FALSE)
-  ggsave(out_path, mapa_final, width = 16, height = 13, dpi = 200, bg = "white")
+  ggsave(out_path, mapa_final, width = 16, height = 13, dpi = 200, bg = "transparent")
   cat("Map saved to:", out_path, "\n")
 }
