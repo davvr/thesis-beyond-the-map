@@ -375,7 +375,6 @@ render_cis_map <- function(results_enriched, out_path) {
     p <- p +
       geom_rect(data = prep, aes(xmin = 0.5, xmax = 7.5, ymin = y_base - 0.1, ymax = y_base + 0.75 + 0.1, fill = base_hex), color = NA) +
       geom_text(data = prep, aes(x = 0.7, y = y_base + 0.375, label = party), color = "white", fontface = "bold", hjust = 0, size = 4.5) +
-      geom_text(data = prep, aes(x = 7.3, y = y_base + 0.375, label = candidate), color = "white", fontface = "bold.italic", hjust = 1, size = 3.5) +
       geom_text(data = prep, aes(x = 8.5, y = y_base + 0.375, label = label_pct, color = base_hex), fontface = "bold", hjust = 0.5, size = 4.5) +
       geom_text(data = prep, aes(x = 10.5, y = y_base + 0.375, label = label_seats, color = base_hex), fontface = "bold", hjust = 0.5, size = 4.5) +
       scale_fill_identity() + scale_color_identity() + theme_void() +
