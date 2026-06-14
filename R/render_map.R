@@ -268,8 +268,8 @@ render_cis_map <- function(results_enriched, out_path) {
     geom_vline(xintercept = 2.0, color = "white", linewidth = 1.5) +
     scale_fill_manual(values = colores_nacional) + scale_x_continuous(limits = c(0, 3)) +
     coord_polar(theta = "y", start = pi / 2, direction = -1) +
-    geom_text(aes(x = 1.0, y = 0.02), label = "Seats", color = "#c8f135", size = 3, fontface = "bold") +
-    geom_text(aes(x = 2.9, y = 0.02), label = "Votes", color = "#c8f135", size = 3, fontface = "bold") +
+    geom_shadowtext(aes(x = 1.0, y = 0.02), label = "Seats", color = "#c8f135", bg.color = "black", bg.r = 0.1, size = 3, fontface = "bold") +
+    geom_shadowtext(aes(x = 2.9, y = 0.02), label = "Votes", color = "#c8f135", bg.color = "black", bg.r = 0.1, size = 3, fontface = "bold") +
     theme_void() + theme(panel.background = element_rect(fill = "transparent", color = NA),
                          plot.background  = element_rect(fill = "transparent", color = NA),
                          legend.position  = "none")
