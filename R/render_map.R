@@ -7,6 +7,7 @@ suppressPackageStartupMessages({
   library(mapSpain)
   library(colorspace)
   library(cowplot)
+  library(shadowtext)
 })
 
 render_cis_map <- function(results_enriched, out_path) {
@@ -206,13 +207,14 @@ render_cis_map <- function(results_enriched, out_path) {
       y_linea <- bbox$ymin - (alto_prov * 0.15)
       y_texto <- if (nrow(coords_calc) > 0) max(coords_calc$y_pos) + (spacing_custom * 0.9) else bbox$ymax + 20000
     }
-    
     p <- ggplot() + geom_sf(data = prov_sf, aes(fill = final_hex), color = "transparent", size = 0.2)
     if (nrow(coords_calc) > 0) {
       p <- p + geom_point(data = coords_calc, aes(x = x_pos, y = y_pos, fill = base_hex),
                           shape = 21, color = "black", size = size_dots, stroke = 0.3)
     }
-    p <- p + geom_text(aes(x = cx_local, y = y_texto, label = nombre_prov), color = "#c8f135", fontface = "bold", size = 3.5, vjust = 0) +
+    p <- p + geom_shadowtext(aes(x = cx_local, y = y_texto, label = nombre_prov), 
+                             color = "#c8f135", bg.color = "black", bg.r = 0.1, 
+                             fontface = "bold", size = 3.5, vjust = 0) +
       scale_fill_identity() + theme_void() + theme(plot.background = element_blank())
     
     if (is.null(radio_vista)) {
@@ -301,7 +303,7 @@ render_cis_map <- function(results_enriched, out_path) {
   
   centroids_zoom <- suppressWarnings(mapa_provincias |> filter(cpro == "28") |> st_centroid()) |>
     mutate(cx = st_coordinates(geometry)[,1], cy = st_coordinates(geometry)[,2])
-  
+
   mapa_base <- ggplot() +
     geom_sf(data = mapa_shift |> filter(!cpro %in% c("07", "35", "38")), aes(fill = final_hex), color = "white", size = 0.2) +
     geom_sf(data = mapa_shift |> filter(cpro %in% c("07", "35", "38")), aes(fill = final_hex), color = "transparent", size = 0.2) +
@@ -311,12 +313,14 @@ render_cis_map <- function(results_enriched, out_path) {
     geom_segment(data = lines_data_main, aes(x = real_x, y = real_y, xend = cx, yend = end_y), color = "black", linewidth = 0.5) +
     geom_text(data = centroids_zoom, aes(x = cx, y = cy), label = "*", color = "white", size = 15, fontface = "bold") +
     geom_point(data = seats_shift, aes(x = x_pos, y = y_pos, fill = base_hex), shape = 21, color = "black", size = 4.8, stroke = 0.3) +
-    geom_text(data = labels_shift,
-              aes(x = cx, y = y_label, label = provincia_limpia,
-                  color = if_else(is_displaced, "#c8f135", if_else(final_hex == HEX_PP_OSCURO, "white", "#c8f135", missing = "#c8f135"))),
-              size = 3.4, fontface = "bold") +
+    geom_shadowtext(data = labels_shift,
+                    aes(x = cx, y = y_label, label = provincia_limpia,
+                        color = if_else(is_displaced, "#c8f135", if_else(final_hex == HEX_PP_OSCURO, "white", "#c8f135", missing = "#c8f135"))),
+                    bg.color = "black", bg.r = 0.1, size = 3.4, fontface = "bold") +
     scale_fill_identity() + scale_color_identity() + theme_void() +
     theme(panel.background = element_rect(fill = "transparent", color = NA), plot.background  = element_rect(fill = "transparent", color = NA))
+  
+  
   
   # 6. Legend tables and national statistics
   national_stats <- results_enriched |> filter(nombre_de_provincia == "España") |>
@@ -333,18 +337,18 @@ render_cis_map <- function(results_enriched, out_path) {
     ) |> filter(!is.na(party))
   
   layout_manual <- tribble(
-    ~party,       ~candidate,              ~col, ~row,
-    "PP",         "Alberto Núñez Feijóo",  1,    1,
-    "PSOE",       "Pedro Sánchez",         1,    2,
-    "Vox",        "Santiago Abascal",      1,    3,
-    "Sumar",      "Yolanda Díaz",          1,    4,
-    "ERC",        "Gabriel Rufián",        1,    5,
-    "Junts",      "Miriam Nogueras",       2,    1,
-    "EH Bildu",   "Mertxe Aizpurua",       2,    2,
-    "PNV",        "Aitor Esteban",         2,    3,
-    "BNG",        "Néstor Rego",           2,    4,
-    "CC",         "Cristina Valido",       2,    5,
-    "UPN",        "Alberto Catalán",       2,    6
+    ~party,     ~col, ~row,
+    "PP",       1,    1,
+    "PSOE",     1,    2,
+    "Vox",      1,    3,
+    "Sumar",    1,    4,
+    "ERC",      1,    5,
+    "Junts",    2,    1,
+    "EH Bildu", 2,    2,
+    "PNV",      2,    3,
+    "BNG",      2,    4,
+    "CC",       2,    5,
+    "UPN",      2,    6
   )
   
   projected_winners <- results_final_mapa |> filter(nombre_de_provincia != "España") |> distinct(ganador) |> pull(ganador)
