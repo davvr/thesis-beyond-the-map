@@ -4,6 +4,7 @@
 
 # Be polite with the CIS server
 Sys.sleep(10)
+
 source("R/scraping/list_barometers.R")
 source("R/scraping/get_zip_url.R")
 source("R/scraping/download_zip.R")
@@ -13,12 +14,13 @@ local_zips <- fs::dir_ls("data-raw/cis", glob = "*.zip")
 local_ids  <- stringr::str_extract(fs::path_file(local_zips), "\\d+")
 
 # 2. What does the CIS catalogue have right now?
-remote     <- list_barometers(n = 6)
+#    Fetch the catalogue once and reuse it throughout this run.
+catalogue  <- list_barometers(n = 20)
+remote     <- head(catalogue, 6)
 remote_ids <- remote$study_id
 
 # 3. Is there anything new?
 new_ids <- setdiff(remote_ids, local_ids)
-
 force_rebuild <- isTRUE(as.logical(Sys.getenv("FORCE_REBUILD", "FALSE")))
 
 if (length(new_ids) == 0 && !force_rebuild) {
@@ -39,15 +41,14 @@ local_zips_updated <- fs::dir_ls("data-raw/cis", glob = "*.zip")
 local_ids_updated  <- stringr::str_extract(fs::path_file(local_zips_updated), "\\d+")
 
 if (length(local_zips_updated) > 6) {
-  # Join with remote dates to sort; fall back to study_id order if not in remote
-  all_known <- list_barometers(n = 20)
+  # Join with catalogue dates to sort; fall back to study_id order if absent
   id_dates  <- tibble::tibble(study_id = local_ids_updated) |>
-    dplyr::left_join(dplyr::select(all_known, study_id, date), by = "study_id") |>
+    dplyr::left_join(dplyr::select(catalogue, study_id, date), by = "study_id") |>
     dplyr::arrange(date)
-
+  
   n_to_drop <- length(local_zips_updated) - 6
   ids_to_drop <- head(id_dates$study_id, n_to_drop)
-
+  
   for (id in ids_to_drop) {
     path <- fs::path("data-raw/cis", paste0("MD", id, ".zip"))
     message("Dropping oldest barometer: ", path)
@@ -56,11 +57,9 @@ if (length(local_zips_updated) > 6) {
 }
 
 # 6. Generate docs/barometers.json with metadata of the current 6 barometers
-
 month_label <- function(date) {
   format(date, "%b")  # "Jan", "Feb", etc.
 }
-
 year_label <- function(date) {
   format(date, "%Y")
 }
@@ -68,8 +67,6 @@ year_label <- function(date) {
 # Read current ZIPs and match with catalogue dates
 current_zips <- fs::dir_ls("data-raw/cis", glob = "*.zip")
 current_ids  <- stringr::str_extract(fs::path_file(current_zips), "\\d+")
-
-catalogue    <- list_barometers(n = 20)
 
 barometers_meta <- tibble::tibble(study_id = current_ids) |>
   dplyr::left_join(

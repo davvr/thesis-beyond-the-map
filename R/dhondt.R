@@ -48,18 +48,3 @@ dhondt <- function(votes, magnitude, threshold = 0.03) {
   }
   seats
 }
-
-#' Allocate seats across all provinces
-#'
-#' Convenience wrapper that applies `dhondt()` province by province.
-#'
-#' @param projections Tibble with columns `province`, `party`, `votes_proj`.
-#' @param magnitudes Named integer vector. Number of seats per province
-#'   (constituency code -> magnitude).
-#' @param threshold Numeric. Vote-share threshold, default 0.03.
-#'
-#' @return Tibble with columns `province`, `party`, `seats`.
-allocate_seats <- function(projections, magnitudes, threshold = 0.03) {
-  # TODO: split by province, call dhondt() with the right magnitude, bind back.
-  stop("allocate_seats(): not implemented yet")
-}
