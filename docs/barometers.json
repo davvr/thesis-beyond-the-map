@@ -1,15 +1,10 @@
 {
   "latest": {
-    "id": "3567",
-    "month": "Jun",
+    "id": "3562",
+    "month": "May",
     "year": "2026"
   },
   "all": [
-    {
-      "id": "3567",
-      "month": "Jun",
-      "year": "2026"
-    },
     {
       "id": "3562",
       "month": "May",
@@ -34,6 +29,11 @@
       "id": "3540",
       "month": "Jan",
       "year": "2026"
+    },
+    {
+      "id": "3567",
+      "month": null,
+      "year": null
     }
   ]
 }
