@@ -1,23 +1,18 @@
 {
   "latest": {
-    "id": "3571",
-    "month": "Jul",
+    "id": "3577",
+    "month": "Sep",
     "year": "2026"
   },
   "all": [
     {
+      "id": "3577",
+      "month": "Sep",
+      "year": "2026"
+    },
+    {
       "id": "3571",
       "month": "Jul",
-      "year": "2026"
-    },
-    {
-      "id": "3567",
-      "month": "Jun",
-      "year": "2026"
-    },
-    {
-      "id": "3562",
-      "month": "May",
       "year": "2026"
     },
     {
@@ -26,12 +21,17 @@
       "year": "2026"
     },
     {
-      "id": "3544",
-      "month": "Feb",
-      "year": "2026"
+      "id": "3557",
+      "month": null,
+      "year": null
     },
     {
-      "id": "3557",
+      "id": "3562",
+      "month": null,
+      "year": null
+    },
+    {
+      "id": "3567",
       "month": null,
       "year": null
     }
